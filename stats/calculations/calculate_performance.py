@@ -47,7 +47,7 @@ def get_json_files(rel_in_dir, pattern):
     json_files = []
     for file_name in filtered:
         file_size_name = file_name.split(".")[0].split("_")[-1:][0]
-        absolute_file_path = abs_dir + "\\" + file_name
+        absolute_file_path = abs_dir + "/" + file_name
         json_files.append((file_size_name, absolute_file_path))
 
     return json_files
@@ -58,7 +58,7 @@ def aggregate_metrics(runs, point_1, point_2):
     for metric in metrics_lists:
         metrics_lists[metric] = []
 
-    for run_id in range(5, len(runs)):
+    for run_id in range(2, len(runs)):
         run = runs[run_id]
 
         # Retrieve the metrics recorded at the specified point
@@ -95,6 +95,7 @@ def calculate_metrics_statistics(metrics_lists):
     for metric_index in range(len(metric_names)):
         metric_name = metric_names[metric_index]
         metric_values = metrics_lists[metric_index]
+        print("metric_values", metric_values)
 
         metric_stats[metric_name] = {
             "minimum": min(metric_values),
@@ -137,7 +138,7 @@ def calculate_stats(rel_in_dir, pattern, points, output_file):
         points_stats = calculate_points_stats(runs=runs, points=points) 
 
         complete_statistics[file_size_name] = points_stats
-
+        # print("xxx", runs)
     save_stats(complete_statistics, output_file)
 
 def disk_read_write():
@@ -187,49 +188,70 @@ def all_read_write():
     ipfs_read_write()
     webdav_read_write()
 
-def ftp_download_upload():
+# FTP
+# para: vm pairs, e.g., v1s-v2c
+def ftp_download_upload(vm_pair):
+    path = "/Users/y.wang8uva.nl/experiments2021-2024/Benchmarks/"
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/ftp/", 
+        # rel_in_dir="../../results/performance/download-upload/ftp/", 
+        rel_in_dir=path+"performance/download-upload/FTP/publicIP/" + vm_pair + "/logs/",
         pattern="transfer_ftp_download_*.json", 
         points=["1-2"],
-        output_file="./performance/download-upload/ftp_download.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/FTP/publicIP/" + vm_pair + "/ftp_download.json", 
     )
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/ftp/", 
+        rel_in_dir=path+"performance/download-upload/FTP/publicIP/" + vm_pair + "/logs/", 
         pattern="transfer_ftp_upload_*.json", 
         points=["1-2"],
-        output_file="./performance/download-upload/ftp_upload.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/FTP/publicIP/" + vm_pair + "/ftp_upload.json",
     )
 
-def ipfs_download_upload():
+# IPFS
+def ipfs_download_upload(vm_pair):
+    path = "/Users/y.wang8uva.nl/experiments2021-2024/Benchmarks/"
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/ipfs/", 
+        # rel_in_dir="../../results/performance/download-upload/ipfs/", 
+        rel_in_dir=path+"performance/download-upload/IPFS/publicIP/" + vm_pair + "/logs/",
         pattern="transfer_ipfs_download_*.json", 
         points=["1-7", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7"],
-        output_file="./performance/download-upload/ipfs_download.json",
+        # output_file="./performance/download-upload/ipfs_download.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/IPFS/publicIP/" + vm_pair + "/ipfs_download.json", 
     )
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/ipfs/", 
+        rel_in_dir=path+"performance/download-upload/IPFS/publicIP/" + vm_pair + "/logs/",
         pattern="transfer_ipfs_upload_*.json", 
         points=["1-8", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8"],
-        output_file="./performance/download-upload/ipfs_upload.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/IPFS/publicIP/" + vm_pair + "/ipfs_upload.json", 
+        # output_file="./performance/download-upload/ipfs_upload.json",
     )
 
-def webdav_download_upload():
+# WebDAV
+def webdav_download_upload(vm_pair):
+    path = "/Users/y.wang8uva.nl/experiments2021-2024/Benchmarks/"
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/webdav/", 
+        # rel_in_dir="../../results/performance/download-upload/webdav/", 
+        rel_in_dir=path+"performance/download-upload/WebDAV/publicIP/" + vm_pair + "/logs/",
         pattern="transfer_webdav_download_*.json", 
         points=["1-4", "1-2", "2-3", "3-4"],
-        output_file="./performance/download-upload/webdav_download.json",
+        # output_file="./performance/download-upload/webdav_download.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/WebDAV/publicIP/" + vm_pair + "/webdav_download.json", 
     )
     calculate_stats(
-        rel_in_dir="../../results/performance/download-upload/webdav/", 
+        # rel_in_dir="../../results/performance/download-upload/webdav/", 
+        rel_in_dir=path+"performance/download-upload/WebDAV/publicIP/" + vm_pair + "/logs/",
         pattern="transfer_webdav_upload_*.json", 
         points=["1-5", "1-2", "2-3", "3-4", "4-5"],
-        output_file="./performance/download-upload/webdav_upload.json",
+        # output_file="./performance/download-upload/webdav_upload.json",
+        output_file=path+"stats/calculations/performance_stats/download-upload/WebDAV/publicIP/" + vm_pair + "/webdav_upload.json", 
     )
 
 def all_download_upload():
     ftp_download_upload()
     ipfs_download_upload()
     webdav_download_upload()
+
+if __name__ == "__main__":
+    # vm_pairs = ["v1s-v2c", "v1s-v3c", "v1s-v4c", "v2s-v3c", "v2s-v4c", "v3s-v4c"]
+    ftp_download_upload("v2-v4")
+    # ipfs_download_upload("v2-v3")
+    # webdav_download_upload("v2-v3")
